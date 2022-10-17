@@ -3,11 +3,8 @@
 import sys
 import typing
 from dataclasses import dataclass, field
-from arcaflow_plugin_sdk import (
-    plugin,
-    validation
-)
-from kubernetes import config, client
+from arcaflow_plugin_sdk import plugin, validation
+from kubernetes import config
 import yaml
 
 
@@ -142,7 +139,7 @@ def extract_kubeconfig(
                 "client-certificate-data"
             ]
             output["client_key_data"] = kcl._user.value["client-key-data"]
-        except Exception as e:
+        except Exception:
             print(
                 "client certificate and key data missing, trying to extract"
                 " token"
@@ -154,7 +151,7 @@ def extract_kubeconfig(
         ):
             try:
                 output["token"] = kcl._user.value["token"]
-            except Exception as e:
+            except Exception:
                 print("token missing for user in kubeconfig")
 
         if (
@@ -169,7 +166,7 @@ def extract_kubeconfig(
         print(output)
 
         return "success", kubeconfig_output_schema.unserialize(output)
-    except Exception as e:
+    except Exception:
         return "error", ErrorOutput(1, "Failure in parsing kubeconfig:")
 
 

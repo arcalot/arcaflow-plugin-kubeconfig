@@ -17,7 +17,9 @@ class KubeconfigPluginTest(unittest.TestCase):
             kubeconfig_plugin.kubeconfig_output_schema.unserialize(
                 {
                     "cluster_name": "arcaflow",
-                    "server_url": "https://api.arcaflow.cluster.openshift.com:6443",
+                    "server_url": (
+                        "https://api.arcaflow.cluster.openshift.com:6443"
+                    ),
                     "certificate_authority_data": "LS0tLS1CRUdJTiBDRiCk1JSU",
                     "user": "admin",
                     "client_certificate_data": "LS0tLS1CRUdJTiBDRVJUSUZJ=",
