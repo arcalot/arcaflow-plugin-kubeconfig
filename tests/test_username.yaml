@@ -21,4 +21,6 @@ kubeconfig: |
   users:
   - name: admin
     user:
-      token: sha256~2Z70unz91xNLI43k7MnM_mTbIfwe1EVHuxEXDiFWM9c
+      password: test
+      username: admin
+
