@@ -242,10 +242,6 @@ def extract_kubeconfig(
 
 
 if __name__ == "__main__":
-    import pydevd_pycharm
-
-    pydevd_pycharm.settrace('172.17.0.1', port=10000, stdoutToServer=False, stderrToServer=True)
-
     sys.exit(
         plugin.run(
             plugin.build_schema(
