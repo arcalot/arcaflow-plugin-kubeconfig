@@ -110,7 +110,7 @@ kubeconfig_output_schema = plugin.build_object_schema(SuccessOutput)
     name="kubeconfig plugin",
     description=(
             "Inputs a kubeconfig, parses it and extracts the kubernetes cluster"
-            " details "
+            " details"
     ),
     outputs={"success": SuccessOutput, "error": ErrorOutput},
 )
@@ -172,44 +172,29 @@ def extract_kubeconfig(
             return "error", ErrorOutput(
                 "Failed to find a user named {} in the kubeconfig file: {}".format(current_user, e.__str__()))
 
+        if "server" not in cluster:
+            return "error", ErrorOutput(
+                "Failed to find server in cluster kubeconfig file {} cluster section".format(e.__str__()))
         output = SuccessOutput(
             Connection(host=cluster["server"]),
         )
-        try:
-            output.connection.cacert = base64.b64decode(cluster[
-                                                            "certificate-authority-data"
-                                                        ]).decode('ascii')
-        except KeyError:
-            pass
-        try:
-            output.connection.cert = base64.b64decode(user[
-                                                          "client-certificate-data"
-                                                      ]).decode('ascii')
-        except KeyError:
-            pass
-        try:
-            output.connection.key = base64.b64decode(user[
-                                                         "client-key-data"
-                                                     ]).decode('ascii')
-        except KeyError:
-            pass
-        try:
-            output.connection.username = user["username"]
-        except KeyError:
-            pass
-        try:
-            output.connection.password = user["password"]
-        except KeyError:
-            pass
-        try:
-            output.connection.bearerToken = user["token"]
-        except KeyError:
-            pass
+	output.connection.cacert = base64_decode(cluster.get("certificate-authority-data", None))
+        output.connection.cert = base64_decode(user.get("client-certificate-data", None))
+        output.connection.key = base64.b64decode(user.get("client-key-data", None))
+        output.connection.username = user.get("username", None)
+        output.connection.password = user.get("password", None)
+        output.connection.bearerToken = user.get("token", None)
 
         return "success", output
     except Exception as e:
         print(traceback.format_exc())
         return "error", ErrorOutput("Failure to parse kubeconfig: {}".format(e.__str__()))
+
+
+def base64_decode(encoded):
+    if encoded is None:
+        return None
+    return base64.b64decode(encoded).decode('ascii')
 
 
 if __name__ == "__main__":
