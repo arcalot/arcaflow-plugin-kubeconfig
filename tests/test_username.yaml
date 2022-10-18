@@ -23,4 +23,3 @@ kubeconfig: |
     user:
       password: test
       username: admin
-

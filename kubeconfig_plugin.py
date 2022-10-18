@@ -75,24 +75,6 @@ class Connection:
 
 
 @dataclass
-class ObjectMeta:
-    namespace: typing.Annotated[
-        typing.Optional[str],
-        schema.name("Namespace"),
-        schema.description("Kubernetes namespace to deploy the plugin into.")
-    ] = None
-
-
-@dataclass
-class Deployment:
-    metadata: typing.Annotated[
-        typing.Optional[ObjectMeta],
-        schema.name("Metadata"),
-        schema.description("Kubernetes metadata for plugin deployment.")
-    ] = None
-
-
-@dataclass
 class SuccessOutput:
     """
     This is the output data structure for the success case.
@@ -103,11 +85,6 @@ class SuccessOutput:
         schema.name("Kubernetes connection"),
         schema.description("Kubernetes connection confirmation.")
     ]
-    deployment: typing.Annotated[
-        typing.Optional[Deployment],
-        schema.name("Deployment"),
-        schema.description("Arcaflow deployment information")
-    ] = None
 
 
 @dataclass
@@ -196,8 +173,7 @@ def extract_kubeconfig(
                 "Failed to find a user named {} in the kubeconfig file: {}".format(current_user, e.__str__()))
 
         output = SuccessOutput(
-            Connection(cluster["server"]),
-            None,
+            Connection(host=cluster["server"]),
         )
         try:
             output.connection.cacert = base64.b64decode(cluster[
@@ -227,11 +203,6 @@ def extract_kubeconfig(
             pass
         try:
             output.connection.bearerToken = user["token"]
-
-        except KeyError:
-            pass
-        try:
-            output.deployment.metadata.namespace = Deployment(ObjectMeta(context["namespace"]))
         except KeyError:
             pass
 
