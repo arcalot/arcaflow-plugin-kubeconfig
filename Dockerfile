@@ -1,16 +1,17 @@
 FROM quay.io/centos/centos:stream8
 
-RUN dnf -y module install python39 && dnf -y install python39 python39-pip git
+RUN dnf -y module install python39 && dnf -y install --setopt=tsflags=nodocs python39 python39-pip git && dnf clean all
 RUN mkdir /app
-ADD https://raw.githubusercontent.com/arcalot/arcaflow-plugins/main/LICENSE /app
-ADD kubeconfig_plugin.py /app
-ADD test_kubeconfig_plugin.py /app
-ADD requirements.txt /app
+ADD https://raw.githubusercontent.com/arcalot/arcaflow-plugins/main/LICENSE /app/
+ADD kubeconfig_plugin.py /app/
+ADD test_kubeconfig_plugin.py /app/
+ADD poetry.lock pyproject.toml /app/
 ADD tests /app/tests/
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt
-RUN python3.9 test_kubeconfig_plugin.py
+RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --without dev
 
 RUN mkdir /htmlcov
 RUN pip3 install coverage
