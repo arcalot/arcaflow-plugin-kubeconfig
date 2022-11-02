@@ -178,7 +178,7 @@ def extract_kubeconfig(
         output = SuccessOutput(
             Connection(host=cluster["server"]),
         )
-	output.connection.cacert = base64_decode(cluster.get("certificate-authority-data", None))
+        output.connection.cacert = base64_decode(cluster.get("certificate-authority-data", None))
         output.connection.cert = base64_decode(user.get("client-certificate-data", None))
         output.connection.key = base64.b64decode(user.get("client-key-data", None))
         output.connection.username = user.get("username", None)
