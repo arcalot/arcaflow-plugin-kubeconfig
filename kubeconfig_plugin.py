@@ -4,8 +4,9 @@ import sys
 import traceback
 import typing
 from dataclasses import dataclass, field
-from arcaflow_plugin_sdk import plugin, validation, schema
+
 import yaml
+from arcaflow_plugin_sdk import plugin, schema, validation
 
 
 @dataclass
@@ -27,6 +28,7 @@ class Connection:
     """
     This is a connection specification matching the Go connection structure.
     """
+
     host: typing.Annotated[
         str,
         schema.name("Server"),
@@ -50,7 +52,7 @@ class Connection:
     serverName: typing.Annotated[
         typing.Optional[str],
         schema.name("TLS server name"),
-        schema.description("Server name to verify TLS certificate against.")
+        schema.description("Server name to verify TLS certificate against."),
     ] = None
     cert: typing.Annotated[
         typing.Optional[str],
@@ -60,12 +62,12 @@ class Connection:
     key: typing.Annotated[
         typing.Optional[str],
         schema.name("Client key"),
-        schema.description("Client key in PEM format")
+        schema.description("Client key in PEM format"),
     ] = None
     cacert: typing.Annotated[
         typing.Optional[str],
         schema.name("CA certificate"),
-        schema.description("CA certificate in PEM format")
+        schema.description("CA certificate in PEM format"),
     ] = None
     bearerToken: typing.Annotated[
         typing.Optional[str],
@@ -83,7 +85,7 @@ class SuccessOutput:
     connection: typing.Annotated[
         Connection,
         schema.name("Kubernetes connection"),
-        schema.description("Kubernetes connection confirmation.")
+        schema.description("Kubernetes connection confirmation."),
     ]
 
 
@@ -109,13 +111,12 @@ kubeconfig_output_schema = plugin.build_object_schema(SuccessOutput)
     id="kubeconfig",
     name="kubeconfig plugin",
     description=(
-            "Inputs a kubeconfig, parses it and extracts the kubernetes cluster"
-            " details"
+        "Inputs a kubeconfig, parses it and extracts the kubernetes cluster details"
     ),
     outputs={"success": SuccessOutput, "error": ErrorOutput},
 )
 def extract_kubeconfig(
-        params: InputParams,
+    params: InputParams,
 ) -> typing.Tuple[str, typing.Union[SuccessOutput, ErrorOutput]]:
     print("==>> Parsing and extracting kubernetes cluster details ...")
 
@@ -124,15 +125,21 @@ def extract_kubeconfig(
 
         try:
             if kubeconfig["kind"] != "Config":
-                return "error", ErrorOutput("The provided file is not a kubeconfig file")
+                return "error", ErrorOutput(
+                    "The provided file is not a kubeconfig file"
+                )
         except KeyError:
-            return "error", ErrorOutput("The provided file is not a kubeconfig file (missing 'kind' field)")
+            return "error", ErrorOutput(
+                "The provided file is not a kubeconfig file (missing 'kind' field)"
+            )
 
         try:
             current_context = kubeconfig["current-context"]
         except KeyError:
             return "error", ErrorOutput(
-                "The provided kubeconfig file does not have a current-context set. Please set a current context to use.")
+                """The provided kubeconfig file does not have a current-context set."""
+                """ Please set a current context to use."""
+            )
 
         try:
             context = None
@@ -141,12 +148,19 @@ def extract_kubeconfig(
                     context = ctx["context"]
             if context is None:
                 return "error", ErrorOutput(
-                    "Failed to find a context named {} in the kubeconfig file.".format(current_context))
+                    "Failed to find a context named {} in the kubeconfig file.".format(
+                        current_context
+                    )
+                )
             current_cluster = context["cluster"]
             current_user = context["user"]
         except Exception as e:
             return "error", ErrorOutput(
-                "Failed to find a context named {} in the kubeconfig file: {}".format(current_context, e.__str__()))
+                """Exception caused failure to failed to find a context"""
+                """ named {} in the kubeconfig file. Exception: {}""".format(
+                    current_context, e.__str__()
+                )
+            )
 
         try:
             cluster = None
@@ -155,10 +169,15 @@ def extract_kubeconfig(
                     cluster = cl["cluster"]
             if cluster is None:
                 return "error", ErrorOutput(
-                    "Failed to find a cluster named {} in the kubeconfig file.".format(current_cluster))
+                    "Failed to find a cluster named {} in the kubeconfig file.".format(
+                        current_cluster
+                    )
+                )
         except Exception as e:
             return "error", ErrorOutput(
-                "Failed to find a cluster named {} in the kubeconfig file: {}".format(current_cluster, e.__str__()))
+                """Failed to find a cluster named {} in the kubeconfig file."""
+                """ Exception: {}""".format(current_cluster, e.__str__())
+            )
 
         try:
             user = None
@@ -167,19 +186,30 @@ def extract_kubeconfig(
                     user = u["user"]
             if user is None:
                 return "error", ErrorOutput(
-                    "Failed to find a user named {} in the kubeconfig file.".format(current_user))
+                    "Failed to find a user named {} in the kubeconfig file.".format(
+                        current_user
+                    )
+                )
         except Exception as e:
             return "error", ErrorOutput(
-                "Failed to find a user named {} in the kubeconfig file: {}".format(current_user, e.__str__()))
+                """Failed to find a user named {} in the kubeconfig file."""
+                """ Exception: {}""".format(current_user, e.__str__())
+            )
 
         if "server" not in cluster:
             return "error", ErrorOutput(
-                "Failed to find server in cluster kubeconfig file {} cluster section".format(e.__str__()))
+                """"Failed to find server in cluster kubeconfig file {}"""
+                """ cluster section""".format(current_cluster)
+            )
         output = SuccessOutput(
             Connection(host=cluster["server"]),
         )
-        output.connection.cacert = base64_decode(cluster.get("certificate-authority-data", None))
-        output.connection.cert = base64_decode(user.get("client-certificate-data", None))
+        output.connection.cacert = base64_decode(
+            cluster.get("certificate-authority-data", None)
+        )
+        output.connection.cert = base64_decode(
+            user.get("client-certificate-data", None)
+        )
         output.connection.key = base64_decode(user.get("client-key-data", None))
         output.connection.username = user.get("username", None)
         output.connection.password = user.get("password", None)
@@ -188,13 +218,15 @@ def extract_kubeconfig(
         return "success", output
     except Exception as e:
         print(traceback.format_exc())
-        return "error", ErrorOutput("Failure to parse kubeconfig: {}".format(e.__str__()))
+        return "error", ErrorOutput(
+            "Failure to parse kubeconfig: {}".format(e.__str__())
+        )
 
 
 def base64_decode(encoded):
     if encoded is None:
         return None
-    return base64.b64decode(encoded).decode('ascii')
+    return base64.b64decode(encoded).decode("ascii")
 
 
 if __name__ == "__main__":
