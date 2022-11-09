@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import unittest
+import yaml
 
 from arcaflow_plugin_sdk import plugin
 
@@ -29,6 +30,79 @@ class KubeconfigPluginTest(unittest.TestCase):
         plugin.test_object_serialization(
             kubeconfig_plugin.ErrorOutput(error="This is an error")
         )
+
+    EXPECTED_TOKEN = '''-----BEGIN CERTIFICATE-----
+MIIB4TCCAYugAwIBAgIUCHhhffY1lzezGatYMR02gpEJChkwDQYJKoZIhvcNAQEL
+BQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
+GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMjA5MjgwNTI4MTJaFw0yMzA5
+MjgwNTI4MTJaMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEw
+HwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwXDANBgkqhkiG9w0BAQEF
+AANLADBIAkEArr89f2kggSO/yaCB6EwIQeT6ZptBoX0ZvCMI+DpkCwqOS5fwRbj1
+nEiPnLbzDDgMU8KCPAMhI7JpYRlHnipxWwIDAQABo1MwUTAdBgNVHQ4EFgQUiZ6J
+DwuF9QCh1vwQGXs2MutuQ9EwHwYDVR0jBBgwFoAUiZ6JDwuF9QCh1vwQGXs2Mutu
+Q9EwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAANBAFYIFM27BDiG725d
+VkhRblkvZzeRHhcwtDOQTC9d8M/LymN2y0nHSlJCZm/Lo/aH8viSY1vi1GSHfDz7
+Tlfe8gs=
+-----END CERTIFICATE-----
+'''
+    EXPECTED_KEY = '''-----BEGIN PRIVATE KEY-----
+MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArr89f2kggSO/yaCB
+6EwIQeT6ZptBoX0ZvCMI+DpkCwqOS5fwRbj1nEiPnLbzDDgMU8KCPAMhI7JpYRlH
+nipxWwIDAQABAkBybu/x0MElcGi2u/J2UdwScsV7je5Tt12z82l7TJmZFFJ8RLmc
+rh00Gveb4VpGhd1+c3lZbO1mIT6v3vHM9A0hAiEA14EW6b+99XYza7+5uwIDuiM+
+Bz3pkK+9tlfVXE7JyKsCIQDPlYJ5xtbuT+VvB3XOdD/VWiEqEmvE3flV0417Rqha
+EQIgbyxwNpwtEgEtW8untBrA83iU2kWNRY/z7ap4LkuS+0sCIGe2E+0RmfqQsllp
+icMvM2E92YnykCNYn6TwwCQSJjRxAiEAo9MmaVlK7YdhSMPo52uJYzd9MQZJqhq+
+lB1ZGDx/ARE=
+-----END PRIVATE KEY-----
+'''
+
+
+    def test_functional_token(self):
+        with open("tests/test_token.yaml", "r") as f:
+            test_input = f.read()
+        parsed_input = yaml.safe_load(test_input)
+        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("success", result)
+        plugin.test_object_serialization(data)
+        conn = data.connection
+        self.assertEqual("sha256~2Z70unz91xNLI43k7MnM_mTbIfwe1EVHuxEXDiFWM9c", conn.bearerToken)
+        self.assertEqual(self.EXPECTED_TOKEN, conn.cacert)
+        self.assertEqual(None, conn.cert)
+        self.assertEqual(None, conn.key)
+        self.assertEqual(None, conn.username)
+        self.assertEqual(None, conn.password)
+
+    def test_functional_client_cert(self):
+        with open("tests/test_client_cert.yaml", "r") as f:
+            test_input = f.read()
+        parsed_input = yaml.safe_load(test_input)
+        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("success", result)
+        plugin.test_object_serialization(data)
+        conn = data.connection
+        self.assertEqual(None, conn.bearerToken)
+        self.assertEqual(conn.cert, self.EXPECTED_TOKEN)
+        self.assertEqual(conn.key, self.EXPECTED_KEY)
+        self.assertEqual(None, conn.username)
+        self.assertEqual(None, conn.password)
+
+    def test_functional_username(self):
+        with open("tests/test_username.yaml", "r") as f:
+            test_input = f.read()
+        parsed_input = yaml.safe_load(test_input)
+        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("success", result)
+        plugin.test_object_serialization(data)
+        conn = data.connection
+        self.assertEqual(None, conn.bearerToken)
+        self.assertEqual(None, conn.cert)
+        self.assertEqual(None, conn.key)
+        self.assertEqual("admin", conn.username)
+        self.assertEqual("test", conn.password)
 
 
 if __name__ == "__main__":
