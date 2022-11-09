@@ -31,7 +31,7 @@ class KubeconfigPluginTest(unittest.TestCase):
             kubeconfig_plugin.ErrorOutput(error="This is an error")
         )
 
-    EXPECTED_TOKEN = '''-----BEGIN CERTIFICATE-----
+    EXPECTED_TOKEN = """-----BEGIN CERTIFICATE-----
 MIIB4TCCAYugAwIBAgIUCHhhffY1lzezGatYMR02gpEJChkwDQYJKoZIhvcNAQEL
 BQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
 GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMjA5MjgwNTI4MTJaFw0yMzA5
@@ -44,8 +44,8 @@ Q9EwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAANBAFYIFM27BDiG725d
 VkhRblkvZzeRHhcwtDOQTC9d8M/LymN2y0nHSlJCZm/Lo/aH8viSY1vi1GSHfDz7
 Tlfe8gs=
 -----END CERTIFICATE-----
-'''
-    EXPECTED_KEY = '''-----BEGIN PRIVATE KEY-----
+"""
+    EXPECTED_KEY = """-----BEGIN PRIVATE KEY-----
 MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArr89f2kggSO/yaCB
 6EwIQeT6ZptBoX0ZvCMI+DpkCwqOS5fwRbj1nEiPnLbzDDgMU8KCPAMhI7JpYRlH
 nipxWwIDAQABAkBybu/x0MElcGi2u/J2UdwScsV7je5Tt12z82l7TJmZFFJ8RLmc
@@ -55,8 +55,7 @@ EQIgbyxwNpwtEgEtW8untBrA83iU2kWNRY/z7ap4LkuS+0sCIGe2E+0RmfqQsllp
 icMvM2E92YnykCNYn6TwwCQSJjRxAiEAo9MmaVlK7YdhSMPo52uJYzd9MQZJqhq+
 lB1ZGDx/ARE=
 -----END PRIVATE KEY-----
-'''
-
+"""
 
     def test_functional_token(self):
         with open("tests/test_token.yaml", "r") as f:
@@ -67,7 +66,9 @@ lB1ZGDx/ARE=
         self.assertEqual("success", result)
         plugin.test_object_serialization(data)
         conn = data.connection
-        self.assertEqual("sha256~2Z70unz91xNLI43k7MnM_mTbIfwe1EVHuxEXDiFWM9c", conn.bearerToken)
+        self.assertEqual(
+            "sha256~2Z70unz91xNLI43k7MnM_mTbIfwe1EVHuxEXDiFWM9c", conn.bearerToken
+        )
         self.assertEqual(self.EXPECTED_TOKEN, conn.cacert)
         self.assertEqual(None, conn.cert)
         self.assertEqual(None, conn.key)
