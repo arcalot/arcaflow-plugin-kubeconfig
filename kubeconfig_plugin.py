@@ -121,86 +121,113 @@ def extract_kubeconfig(
     print("==>> Parsing and extracting kubernetes cluster details ...")
 
     try:
-        kubeconfig = yaml.safe_load(params.kubeconfig)
-
         try:
+            kubeconfig = yaml.safe_load(params.kubeconfig)
+        except Exception as e:
+            return "error", ErrorOutput(
+                "Exception occurred while loading YAML. Input is not valid YAML."
+                + " Exception: {}".format(e.__str__())
+            )
+
+        # Kubeconfig files have the kind set as Config
+        if "kind" in kubeconfig:
             if kubeconfig["kind"] != "Config":
                 return "error", ErrorOutput(
                     "The provided file is not a kubeconfig file"
                 )
-        except KeyError:
+        else:
             return "error", ErrorOutput(
                 "The provided file is not a kubeconfig file (missing 'kind' field)"
             )
 
-        try:
-            current_context = kubeconfig["current-context"]
-        except KeyError:
+        # Get the current context, then search for the values for that context in the
+        # context section
+        current_context = kubeconfig.get("current-context", None)
+        if current_context is None:
             return "error", ErrorOutput(
                 """The provided kubeconfig file does not have a current-context set."""
                 """ Please set a current context to use."""
             )
 
-        try:
-            context = None
-            for ctx in kubeconfig["contexts"]:
-                if ctx["name"] == current_context:
-                    context = ctx["context"]
-            if context is None:
+        if "contexts" not in kubeconfig:
+            return "error", ErrorOutput("'contexts' field missing from kubeconfig.")
+
+        context = None
+        for ctx in kubeconfig["contexts"]:
+            if "name" not in ctx:
                 return "error", ErrorOutput(
-                    "Failed to find a context named {} in the kubeconfig file.".format(
-                        current_context
-                    )
+                    "'name' section missing from context entry in kubeconfig"
                 )
-            current_cluster = context["cluster"]
-            current_user = context["user"]
-        except Exception as e:
+            if ctx["name"] == current_context:
+                context = ctx["context"]
+        if context is None:
             return "error", ErrorOutput(
-                """Exception caused failure to failed to find a context"""
-                """ named {} in the kubeconfig file. Exception: {}""".format(
-                    current_context, e.__str__()
+                "Failed to find a context named {} in the kubeconfig file.".format(
+                    current_context
                 )
             )
 
-        try:
-            cluster = None
-            for cl in kubeconfig["clusters"]:
-                if cl["name"] == current_cluster:
-                    cluster = cl["cluster"]
-            if cluster is None:
+        for expected_key in ["cluster", "user"]:
+            if expected_key not in context:
                 return "error", ErrorOutput(
-                    "Failed to find a cluster named {} in the kubeconfig file.".format(
-                        current_cluster
+                    "'{}' field missing from kubeconfig current context.".format(
+                        expected_key
                     )
                 )
-        except Exception as e:
-            return "error", ErrorOutput(
-                """Failed to find a cluster named {} in the kubeconfig file."""
-                """ Exception: {}""".format(current_cluster, e.__str__())
-            )
+        current_cluster = context["cluster"]
+        current_user = context["user"]
 
-        try:
-            user = None
-            for u in kubeconfig["users"]:
-                if u["name"] == current_user:
-                    user = u["user"]
-            if user is None:
+        # Now find the cluster for that current context
+        if "clusters" not in kubeconfig:
+            return "error", ErrorOutput("Clusters section missing from kubeconfig file")
+
+        cluster = None
+        for cl in kubeconfig["clusters"]:
+            if "name" not in cl:
                 return "error", ErrorOutput(
-                    "Failed to find a user named {} in the kubeconfig file.".format(
-                        current_user
-                    )
+                    "'name' section missing from clusters entry in kubeconfig"
                 )
-        except Exception as e:
+            if cl["name"] == current_cluster:
+                if "cluster" not in cl:
+                    return "error", ErrorOutput(
+                        "cluster section missing from section "
+                        + "of current cluster {}".format(current_cluster)
+                    )
+                cluster = cl["cluster"]
+        if cluster is None:
             return "error", ErrorOutput(
-                """Failed to find a user named {} in the kubeconfig file."""
-                """ Exception: {}""".format(current_user, e.__str__())
+                "Failed to find a cluster named {} in the kubeconfig file.".format(
+                    current_cluster
+                )
             )
 
+        # Now find the user for current context's user for authentication.
+        if "users" not in kubeconfig:
+            return "error", ErrorOutput("'users' section not found in kubeconfig")
+        user = None
+        for u in kubeconfig["users"]:
+            for required_key in ["name", "user"]:
+                if required_key not in u:
+                    return "error", ErrorOutput(
+                        """'{0}' section in the users section not found in the """
+                        """kubeconfig""".format(required_key)
+                    )
+            if u["name"] == current_user:
+                user = u["user"]
+        if user is None:
+            return "error", ErrorOutput(
+                "Failed to find a user named {} in the kubeconfig file.".format(
+                    current_user
+                )
+            )
+
+        # Ensure the server is in the kubeconfig
         if "server" not in cluster:
             return "error", ErrorOutput(
-                """"Failed to find server in cluster kubeconfig file {}"""
+                """Failed to find server in cluster kubeconfig file {0}"""
                 """ cluster section""".format(current_cluster)
             )
+        # Populate output values from the user and server sections.
         output = SuccessOutput(
             Connection(host=cluster["server"]),
         )
@@ -217,9 +244,11 @@ def extract_kubeconfig(
 
         return "success", output
     except Exception as e:
+        # This is the catch-all case.
+        # The goal is for all other errors to be addressed individually.
         print(traceback.format_exc())
         return "error", ErrorOutput(
-            "Failure to parse kubeconfig: {}".format(e.__str__())
+            "Failure to parse kubeconfig. Exception: {}".format(e.__str__())
         )
 
 

@@ -57,11 +57,15 @@ lB1ZGDx/ARE=
 -----END PRIVATE KEY-----
 """
 
-    def test_functional_token(self):
-        with open("tests/test_token.yaml", "r") as f:
+    def get_kubeconfig_test_value(self, filename):
+        with open(filename, "r") as f:
             test_input = f.read()
         parsed_input = yaml.safe_load(test_input)
-        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        return parsed_input["kubeconfig"]
+
+    def test_functional_token(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_token.yaml")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
         result, data = kubeconfig_plugin.extract_kubeconfig(input)
         self.assertEqual("success", result)
         plugin.test_object_serialization(data)
@@ -76,10 +80,8 @@ lB1ZGDx/ARE=
         self.assertEqual(None, conn.password)
 
     def test_functional_client_cert(self):
-        with open("tests/test_client_cert.yaml", "r") as f:
-            test_input = f.read()
-        parsed_input = yaml.safe_load(test_input)
-        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_client_cert.yaml")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
         result, data = kubeconfig_plugin.extract_kubeconfig(input)
         self.assertEqual("success", result)
         plugin.test_object_serialization(data)
@@ -91,10 +93,8 @@ lB1ZGDx/ARE=
         self.assertEqual(None, conn.password)
 
     def test_functional_username(self):
-        with open("tests/test_username.yaml", "r") as f:
-            test_input = f.read()
-        parsed_input = yaml.safe_load(test_input)
-        input = kubeconfig_plugin.InputParams(kubeconfig=parsed_input["kubeconfig"])
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
         result, data = kubeconfig_plugin.extract_kubeconfig(input)
         self.assertEqual("success", result)
         plugin.test_object_serialization(data)
@@ -104,6 +104,158 @@ lB1ZGDx/ARE=
         self.assertEqual(None, conn.key)
         self.assertEqual("admin", conn.username)
         self.assertEqual("test", conn.password)
+
+    def test_invalid_yaml(self):
+        input = kubeconfig_plugin.InputParams(kubeconfig="\tyaml-can't-have-tabs")
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("not valid YAML", data.error)
+
+    def test_missing_kind(self):
+        # Empty file
+        input = kubeconfig_plugin.InputParams(kubeconfig="{}")
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("missing 'kind' field", data.error)
+
+        # Test entirely wrong yaml, but not empty.
+        input = kubeconfig_plugin.InputParams(kubeconfig='a:\n    b: "Config"')
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("missing 'kind' field", data.error)
+
+    def test_wrong_kind(self):
+        # Test entirely wrong yaml, but not empty.
+        input = kubeconfig_plugin.InputParams(kubeconfig="kind: NotConfig")
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("not a kubeconfig file", data.error)
+
+    def test_missing_current_context(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Change current-context line
+        kubeconfig = kubeconfig.replace("current-context:", "not-current-context:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("current-context", data.error)
+
+    def test_missing_contexts(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Change contexts line
+        kubeconfig = kubeconfig.replace("contexts:", "not-contexts:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("contexts", data.error)
+
+    def test_missing_context_cluster_with_name(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Replacing the name that is in the context section
+        kubeconfig = kubeconfig.replace("name: arcaflow-", "wrong: arcaflow-")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("'name' section missing from context", data.error)
+
+    def test_current_context_not_in_contexts(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Change current-context line
+        kubeconfig = kubeconfig.replace(
+            "current-context: admin", "current-context: wrong"
+        )
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("Failed to find", data.error)
+
+    def test_values_in_context(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Remove the two needed values
+        kubeconfig_no_cluster_val = kubeconfig.replace("user: admin", "wrong: wrong")
+        kubeconfig_no_user_val = kubeconfig.replace("cluster: arcaflow", "wrong: wrong")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig_no_cluster_val)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("field missing", data.error)
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig_no_user_val)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("field missing", data.error)
+
+    def test_missing_clusters(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("clusters:", "notclusters:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("Clusters section missing", data.error)
+
+    def test_missing_cluster_section(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("- cluster:", "- notcluster:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("cluster section missing", data.error)
+
+    def test_missing_clusters_cluster_with_name(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Replacing the name section in the clusters -> cluster position
+        kubeconfig = kubeconfig.replace("name: arcaflow\n", "name: wrong\n")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("Failed to find a cluster", data.error)
+
+    def test_missing_cluster_name_section(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("name: arcaflow\n", "wrong: arcaflow\n")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("'name' section missing", data.error)
+
+    def test_missing_users(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("users:", "wrong:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("'users' section not found", data.error)
+
+    def test_missing_users_section_keys(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("- name: admin", "- wrong: admin")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("'name' section in the users", data.error)
+
+    def test_missing_users_user_section(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("user:\n", "wrong:\n")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("'user' section in the users", data.error)
+
+    def test_user_not_found(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        kubeconfig = kubeconfig.replace("- name: admin", "- name: wrong")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("Failed to find a user named", data.error)
+
+    def test_missing_server_section(self):
+        kubeconfig = self.get_kubeconfig_test_value("tests/test_username.yaml")
+        # Change current-context line
+        kubeconfig = kubeconfig.replace("server:", "wrong:")
+        input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
+        result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        self.assertEqual("error", result)
+        self.assertIn("Failed to find server", data.error)
 
 
 if __name__ == "__main__":
