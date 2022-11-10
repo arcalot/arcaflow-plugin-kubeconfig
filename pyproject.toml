@@ -9,7 +9,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-arcaflow-plugin-sdk = { git = "https://github.com/arcalot/arcaflow-plugin-sdk-python.git", branch="allow-scope-in-one-of" }
+arcaflow-plugin-sdk = "0.9.0"
 kubernetes = "^24.2.0"
 PyYAML = ">=5.4"
 
