@@ -1,0 +1,9 @@
+[allowlist]
+  description = "Repo Allowlist"
+  paths = [
+    # Ignore the test file that has some example keys
+    '''test_kubeconfig_plugin\.py$''',
+
+    # Ignore the .gitleaks.toml
+    '''\.gitleaks\.toml$''',
+  ]
