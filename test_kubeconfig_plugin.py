@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 import yaml
+import sys
 
 from arcaflow_plugin_sdk import plugin
 
@@ -67,6 +68,9 @@ lB1ZGDx/ARE=
         kubeconfig = self.get_kubeconfig_test_value("tests/test_token.yaml")
         input = kubeconfig_plugin.InputParams(kubeconfig=kubeconfig)
         result, data = kubeconfig_plugin.extract_kubeconfig(input)
+        # This is the happy case, so if it fails, print the error data
+        if result != "success":
+            print(f"Functional test failed. Error data: {data.error}", file=sys.stderr)
         self.assertEqual("success", result)
         plugin.test_object_serialization(data)
         conn = data.connection
