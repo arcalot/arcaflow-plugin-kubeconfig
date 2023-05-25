@@ -11,7 +11,7 @@ WORKDIR /app
 
 RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
-RUN poetry install --without dev
+RUN poetry install
 
 RUN mkdir /htmlcov
 RUN pip3 install coverage
