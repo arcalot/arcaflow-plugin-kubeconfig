@@ -6,6 +6,9 @@ authors = ["Arcalot Contributors"]
 license = "Apache-2.0"
 readme = "README.md"
 
+packages = [
+   { include="kubeconfig_plugin.py", from="./arcaflow_plugin_kubeconfig"  },
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
