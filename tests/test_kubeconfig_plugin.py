@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
+
 import unittest
 import yaml
 import sys
-
 from arcaflow_plugin_sdk import plugin
-
-import kubeconfig_plugin
+# import kubeconfig_plugin
+from arcaflow_plugin_kubeconfig import kubeconfig_plugin
 
 
 class KubeconfigPluginTest(unittest.TestCase):

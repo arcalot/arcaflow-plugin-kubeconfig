@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "arcaflow-plugin-kubeconfig"
 version = "0.2.0"
-description = ""
+description = "arcaflow plugin for kubeconfig"
 authors = ["Arcalot Contributors"]
-license = "Apache-2.0"
+license = "Apache-2.0+GPL-2.0-only"
 readme = "README.md"
 
 packages = [
@@ -14,8 +14,9 @@ packages = [
 python = "^3.9"
 arcaflow-plugin-sdk = "0.10.1"
 kubernetes = "^24.2.0"
-PyYAML = ">=5.4"
+pyyaml = ">=5.4,<6.0"
+certifi = "^2023.5.7"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
