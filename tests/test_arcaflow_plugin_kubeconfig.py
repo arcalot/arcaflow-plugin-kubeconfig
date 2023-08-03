@@ -43,7 +43,7 @@ Q9EwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAANBAFYIFM27BDiG725d
 VkhRblkvZzeRHhcwtDOQTC9d8M/LymN2y0nHSlJCZm/Lo/aH8viSY1vi1GSHfDz7
 Tlfe8gs=
 -----END CERTIFICATE-----
-"""
+""" # notsecret
     EXPECTED_KEY = """-----BEGIN PRIVATE KEY-----
 MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArr89f2kggSO/yaCB
 6EwIQeT6ZptBoX0ZvCMI+DpkCwqOS5fwRbj1nEiPnLbzDDgMU8KCPAMhI7JpYRlH
@@ -54,7 +54,7 @@ EQIgbyxwNpwtEgEtW8untBrA83iU2kWNRY/z7ap4LkuS+0sCIGe2E+0RmfqQsllp
 icMvM2E92YnykCNYn6TwwCQSJjRxAiEAo9MmaVlK7YdhSMPo52uJYzd9MQZJqhq+
 lB1ZGDx/ARE=
 -----END PRIVATE KEY-----
-"""
+""" # notsecret
 
     def get_kubeconfig_test_value(self, filename):
         with open(filename, "r") as f:
