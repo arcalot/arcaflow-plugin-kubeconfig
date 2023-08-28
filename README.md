@@ -80,23 +80,23 @@ Inputs a kubeconfig, parses it and extracts the kubernetes cluster details
             </details></td></tr>
 <tr><td colspan="2"><details><summary><strong>Objects</strong></summary><details><summary>Connection (<code>object</code>)</summary>
             <table><tbody><tr><th>Type:</th><td><code>object</code></td><tr><th>Properties</th><td><details><summary>bearerToken (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Secret token of the user/service account</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Token</td></tr><tr><th>Description:</th><td>Secret token of the user/service account</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>cacert (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>CA certificate in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>CA certificate</td></tr><tr><th>Description:</th><td>CA certificate in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>cert (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Client cert data in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Client certificate</td></tr><tr><th>Description:</th><td>Client cert data in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>host (<code>string</code>)</summary>
         <table><tbody><tr><th>Name:</th><td>Server</td></tr><tr><th>Description:</th><td>Kubernetes API URL</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>key (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Client key in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Client key</td></tr><tr><th>Description:</th><td>Client key in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>password (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Password to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Password</td></tr><tr><th>Description:</th><td>Password to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>path (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Kubernetes API path</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>API path</td></tr><tr><th>Description:</th><td>Kubernetes API path</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>serverName (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Server name to verify TLS certificate against.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>TLS server name</td></tr><tr><th>Description:</th><td>Server name to verify TLS certificate against.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>username (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Username to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Username</td></tr><tr><th>Description:</th><td>Username to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details></td></tr>
 </tbody></table>
         </details><details><summary>SuccessOutput (<code>object</code>)</summary>

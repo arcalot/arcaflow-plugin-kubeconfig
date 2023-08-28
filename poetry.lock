@@ -2,13 +2,13 @@
 
 [[package]]
 name = "arcaflow-plugin-sdk"
-version = "0.10.1"
+version = "0.10.3"
 description = "Plugin SDK for Python for the Arcaflow workflow engine"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "arcaflow_plugin_sdk-0.10.1-py3-none-any.whl", hash = "sha256:ca55af6ab916ee1f7dfd9be7b332480161dac282db50fae0c713d33641a3b942"},
-    {file = "arcaflow_plugin_sdk-0.10.1.tar.gz", hash = "sha256:342af5fbb2647a570c8f459d97f10522393fe712a5f227d1003e72752d61e362"},
+    {file = "arcaflow_plugin_sdk-0.10.3-py3-none-any.whl", hash = "sha256:0c424f01ab2cd724a7a93aee0f16e9482b97716757e35e104e90d14d31019a66"},
+    {file = "arcaflow_plugin_sdk-0.10.3.tar.gz", hash = "sha256:04e68c3209f352a29346efdfa457be9774abf721cd8ebf511613a698d3c479a4"},
 ]
 
 [package.dependencies]
@@ -440,4 +440,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "7931c7c2303ab287fae9828b58e8c65adf5cd92d3ef56644368cdef73b8ec385"
+content-hash = "f1b6e8c60babd1013a600f07714892ccd62a816fa2005c64273ab2571ffc0aa0"
