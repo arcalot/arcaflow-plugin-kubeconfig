@@ -2,7 +2,7 @@
 version: '3.2'
 services:
   plugin:
-    image: ghcr.io/arcalot/arcaflow-plugin-kubeconfig
+    image: quay.io/arcalot/arcaflow-plugin-kubeconfig
     build: .
     volumes:
       - source: ./kubeconfig_example.yaml
