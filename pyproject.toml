@@ -12,9 +12,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-arcaflow-plugin-sdk = "0.10.3"
-kubernetes = "^24.2.0"
-pyyaml = ">=5.4,<6.0"
+arcaflow-plugin-sdk = "0.13.0"
+kubernetes = "^28.0.0"
+pyyaml = ">=6,<6.1"
 certifi = "^2023.7.22"
 
 [build-system]
