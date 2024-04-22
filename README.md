@@ -43,11 +43,11 @@ Inputs a kubeconfig, parses it and extracts the kubernetes cluster details
 <table><tbody>
 <tr><th>Type:</th><td><code>scope</code></td><tr><th>Root object:</th><td>InputParams</td></tr>
 <tr><th>Properties</th><td><details><summary>kubeconfig (<code>string</code>)</summary>
-                <table><tbody><tr><th>Name:</th><td>kubeconfig</td></tr><tr><th>Description:</th><td>input kubeconfig string</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td><tr><th>Minimum length:</th><td>1</td></tr></tbody></table>
+                <table><tbody><tr><th>Name:</th><td>kubeconfig</td></tr><tr><th>Description:</th><td width="500">input kubeconfig string</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td><tr><th>Minimum length:</th><td>1</td></tr></tbody></table>
             </details></td></tr>
 <tr><td colspan="2"><details><summary><strong>Objects</strong></summary><details><summary>InputParams (<code>object</code>)</summary>
             <table><tbody><tr><th>Type:</th><td><code>object</code></td><tr><th>Properties</th><td><details><summary>kubeconfig (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>kubeconfig</td></tr><tr><th>Description:</th><td>input kubeconfig string</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td><tr><th>Minimum length:</th><td>1</td></tr></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>kubeconfig</td></tr><tr><th>Description:</th><td width="500">input kubeconfig string</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td><tr><th>Minimum length:</th><td>1</td></tr></tbody></table>
         </details></td></tr>
 </tbody></table>
         </details></details></td></tr>
@@ -61,11 +61,11 @@ Inputs a kubeconfig, parses it and extracts the kubernetes cluster details
 <table><tbody>
 <tr><th>Type:</th><td><code>scope</code></td><tr><th>Root object:</th><td>ErrorOutput</td></tr>
 <tr><th>Properties</th><td><details><summary>error (<code>string</code>)</summary>
-                <table><tbody><tr><th>Name:</th><td>Failure Error</td></tr><tr><th>Description:</th><td>Reason for failure</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+                <table><tbody><tr><th>Name:</th><td>Failure Error</td></tr><tr><th>Description:</th><td width="500">Reason for failure</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
             </details></td></tr>
 <tr><td colspan="2"><details><summary><strong>Objects</strong></summary><details><summary>ErrorOutput (<code>object</code>)</summary>
             <table><tbody><tr><th>Type:</th><td><code>object</code></td><tr><th>Properties</th><td><details><summary>error (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Failure Error</td></tr><tr><th>Description:</th><td>Reason for failure</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Failure Error</td></tr><tr><th>Description:</th><td width="500">Reason for failure</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details></td></tr>
 </tbody></table>
         </details></details></td></tr>
@@ -76,32 +76,32 @@ Inputs a kubeconfig, parses it and extracts the kubernetes cluster details
 <table><tbody>
 <tr><th>Type:</th><td><code>scope</code></td><tr><th>Root object:</th><td>SuccessOutput</td></tr>
 <tr><th>Properties</th><td><details><summary>connection (<code>reference[Connection]</code>)</summary>
-                <table><tbody><tr><th>Name:</th><td>Kubernetes connection</td></tr><tr><th>Description:</th><td>Kubernetes connection confirmation.</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>reference[Connection]</code></td><tr><th>Referenced object:</th><td>Connection</td></tr></tbody></table>
+                <table><tbody><tr><th>Name:</th><td>Kubernetes connection</td></tr><tr><th>Description:</th><td width="500">Kubernetes connection confirmation.</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>reference[Connection]</code></td><tr><th>Referenced object:</th><td>Connection</td></tr></tbody></table>
             </details></td></tr>
 <tr><td colspan="2"><details><summary><strong>Objects</strong></summary><details><summary>Connection (<code>object</code>)</summary>
             <table><tbody><tr><th>Type:</th><td><code>object</code></td><tr><th>Properties</th><td><details><summary>bearerToken (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Token</td></tr><tr><th>Description:</th><td>Secret token of the user/service account</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Token</td></tr><tr><th>Description:</th><td width="500">Secret token of the user/service account</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>cacert (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>CA certificate</td></tr><tr><th>Description:</th><td>CA certificate in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>CA certificate</td></tr><tr><th>Description:</th><td width="500">CA certificate in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>cert (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Client certificate</td></tr><tr><th>Description:</th><td>Client cert data in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Client certificate</td></tr><tr><th>Description:</th><td width="500">Client cert data in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>host (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Server</td></tr><tr><th>Description:</th><td>Kubernetes API URL</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Server</td></tr><tr><th>Description:</th><td width="500">Kubernetes API URL</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>key (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Client key</td></tr><tr><th>Description:</th><td>Client key in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Client key</td></tr><tr><th>Description:</th><td width="500">Client key in PEM format</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>password (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Password</td></tr><tr><th>Description:</th><td>Password to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Password</td></tr><tr><th>Description:</th><td width="500">Password to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>path (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>API path</td></tr><tr><th>Description:</th><td>Kubernetes API path</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>API path</td></tr><tr><th>Description:</th><td width="500">Kubernetes API path</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>serverName (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>TLS server name</td></tr><tr><th>Description:</th><td>Server name to verify TLS certificate against.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>TLS server name</td></tr><tr><th>Description:</th><td width="500">Server name to verify TLS certificate against.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details><details><summary>username (<code>string</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Username</td></tr><tr><th>Description:</th><td>Username to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Username</td></tr><tr><th>Description:</th><td width="500">Username to authenticate with.</td></tr><tr><th>Required:</th><td>No</td></tr><tr><th>Type:</th><td><code>string</code></td></tbody></table>
         </details></td></tr>
 </tbody></table>
         </details><details><summary>SuccessOutput (<code>object</code>)</summary>
             <table><tbody><tr><th>Type:</th><td><code>object</code></td><tr><th>Properties</th><td><details><summary>connection (<code>reference[Connection]</code>)</summary>
-        <table><tbody><tr><th>Name:</th><td>Kubernetes connection</td></tr><tr><th>Description:</th><td>Kubernetes connection confirmation.</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>reference[Connection]</code></td><tr><th>Referenced object:</th><td>Connection</td></tr></tbody></table>
+        <table><tbody><tr><th>Name:</th><td>Kubernetes connection</td></tr><tr><th>Description:</th><td width="500">Kubernetes connection confirmation.</td></tr><tr><th>Required:</th><td>Yes</td></tr><tr><th>Type:</th><td><code>reference[Connection]</code></td><tr><th>Referenced object:</th><td>Connection</td></tr></tbody></table>
         </details></td></tr>
 </tbody></table>
         </details></details></td></tr>
