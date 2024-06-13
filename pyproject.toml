@@ -16,6 +16,8 @@ arcaflow-plugin-sdk = "0.13.0"
 kubernetes = "^29.0.0"
 pyyaml = ">=6,<6.1"
 certifi = "^2024.0.0"
+requests = "^2.32.0"   # fix cve-2024-35195  
+idna = "^3.7"          # fix cve-2024-3651 
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
